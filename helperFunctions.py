@@ -5,7 +5,7 @@ def isIntegerString(s):
         return False
     return True
 
-def flattenList(lst):
+def flattenListString(lst):
     string = ""
     for line in lst:
         string += line

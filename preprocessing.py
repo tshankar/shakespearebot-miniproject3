@@ -56,3 +56,20 @@ def byStanza():
         stanzaData.append(poem[8:12])
         stanzaData.append(poem[12:])
     return stanzaData
+
+def getTrainingData(seqLength):
+    data = byPoem()
+    segments = []
+    trainingX = []
+    trainingY = []
+
+    for poem in data:
+        for line in poem:
+            if len(line) > seqLength:
+                segments.append([line[:seqLength], line[seqLength]])
+
+    for s in range(len(segments)):
+        trainingX.append(segments[s][0])
+        trainingY.append(segments[s][1])
+
+    return (trainingX, trainingY)

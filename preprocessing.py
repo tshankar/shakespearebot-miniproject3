@@ -1,19 +1,19 @@
 import numpy as np
-from helperFunctions import isIntegerString, flattenListString
+from helperFunctions import isIntegerString, flattenListString, getSyllableDict, getWordNumDict, nums_to_words
 
 ''' Returns data = [[line1], [line2],...]'''
 def byLine():
     data = []
     stripped_data = []
-    punctuation = [",", ":", ";", ".", "?", "!", "'"]
-
+    #punctuation = [',', ':', ';', '.', '?', '!', '\'']
+    punctuation = [',', ':', ';', '.', '?', '!']
     data = np.loadtxt("data/shakespeare.txt", delimiter='\n', dtype='bytes').astype(str)
 
     # Strip all whitespace (including whitespace on last line of poems)
     for i in range(len(data)):
         line = data[i].strip()
-        for punc in punctuation: # Delete punctuation
-            line = line.replace(punc, "")
+        # for punc in punctuation: # Delete punctuation
+        #     line = line.replace(punc, "")
 
         if not isIntegerString(line):
             stripped_data.append(line)
@@ -24,12 +24,13 @@ def byLine():
     If flattened, each poem is [line1line2....]. '''
 def byPoem(flatten=False):
     data = []
-    punctuation = [",", ":", ";", ".", "?", "!", "'"]
+    #punctuation = [',', ':', ';', '.', '?', '!', '\'']
+    punctuation = [',', ':', ';', '.', '?', '!']
     with open('data/shakespeare.txt') as f:
         poem = []
         for line in f:
             for punc in punctuation: # Delete punctuation
-                line = line.replace(punc, " ")
+                line = line.replace(punc, "")
 
             if not isIntegerString(line):
                 poem.append(line)
@@ -54,8 +55,8 @@ def byStanza():
         stanzaData.append(poem[12:])
     return stanzaData
 
-''' Returns training data split by sequences of length seqLength'''
-def getTrainingData(seqLength):
+''' Returns training data for RNN split by sequences of length seqLength'''
+def getTrainingDataRNN(seqLength):
     data = byPoem()
     segments = []
     trainingXchars = []
@@ -69,13 +70,13 @@ def getTrainingData(seqLength):
             if len(line) > seqLength:
                 segments.append([line[:seqLength], line[seqLength]])
 
-    # Put the first seqLength characters in trainingXchars and the nex character in traininYchars
+    # Put the first seqLength characters in trainingXchars and the next character in traininYchars
     for s in range(len(segments)):
         trainingXchars.append(segments[s][0])
         trainingYchars.append(segments[s][1])
 
     # Convert the characters in X and Y into numbers
-    characterMap = 'abcdefghijklmnopqrstuvwxyz-() \n'
+    characterMap = 'abcdefghijklmnopqrstuvwxyz-()\' \n'
 
     for i in range(len(trainingXchars)):
         trainingXnums.append([characterMap.index(j) for j in trainingXchars[i].lower()])
@@ -85,3 +86,38 @@ def getTrainingData(seqLength):
     trainingYnums = [y for x in trainingYnums for y in x] # Flatten list
 
     return (trainingXnums, trainingYnums)
+
+def getTrainingDataHMM(seqLength):
+    data = byPoem()
+    segments = []
+    trainingXwords = []
+    trainingYwords = []
+    trainingXnums = []
+    trainingYnums = []
+    word_to_num = getWordNumDict()
+
+    for poem in data:
+        for line in poem:
+            words = line.lower().split()  # Convert each line into a list of words
+            if "" in words: words.remove("") # Remove empty strings where punctuation used to be
+            if all(map(lambda w: w in word_to_num.keys(), words)): # Only consider lines that have all words in our dictionary
+                i = 0
+                while i + seqLength < len(words):
+                    segments.append([words[i:i+seqLength], words[i+seqLength]])
+                    i += seqLength
+
+    # Put the first seqLength characters in trainingXchars and the next character in traininYchars
+    for s in range(len(segments)):
+        trainingXwords.append(segments[s][0])
+        trainingYwords.append(segments[s][1])
+
+    for seq in trainingXwords:
+        nums = list(map(lambda x: word_to_num[x], seq))
+        trainingXnums.append(nums)
+    for w in trainingYwords:
+        trainingYnums.append(word_to_num[w])
+
+
+    return (trainingXnums, trainingYnums)
+
+#print (getTrainingDataHMM(5))

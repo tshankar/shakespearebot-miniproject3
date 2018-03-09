@@ -16,11 +16,11 @@ class HiddenMarkovModel:
     def __init__(self, A, O):
         '''
         Initializes an HMM. Assumes the following:/Users/annaresnick/Documents/155/miniproject3/Set6_Solutions/src/HMM.py
-            - States and observations are integers starting from 0. 
+            - States and observations are integers starting from 0.
             - There is a start state (see notes on A_start below). There
               is no integer associated with the start state, only
               probabilities in the vector A_start.
-            - There is no end state. 
+            - There is no end state.
 
         Arguments:
             A:          Transition matrix with dimensions L x L.
@@ -36,11 +36,11 @@ class HiddenMarkovModel:
             L:          Number of states.
 
             D:          Number of observations.
-            
+
             A:          The transition matrix.
-            
+
             O:          The observation matrix.
-            
+
             A_start:    Starting transition probabilities. The i^th element
                         is the probability of transitioning from the start
                         state to state i. For simplicity, we assume that
@@ -56,7 +56,7 @@ class HiddenMarkovModel:
 
     def viterbi(self, x):
         '''
-        Uses the Viterbi algorithm to find the max probability state 
+        Uses the Viterbi algorithm to find the max probability state
         sequence corresponding to a given input sequence.
 
         Arguments:
@@ -245,12 +245,12 @@ class HiddenMarkovModel:
 
         Arguments:
             X:          A dataset consisting of input sequences in the form
-                        of lists of variable length, consisting of integers 
+                        of lists of variable length, consisting of integers
                         ranging from 0 to D - 1. In other words, a list of
                         lists.
 
             Y:          A dataset consisting of state sequences in the form
-                        of lists of variable length, consisting of integers 
+                        of lists of variable length, consisting of integers
                         ranging from 0 to L - 1. In other words, a list of
                         lists.
 
@@ -267,7 +267,7 @@ class HiddenMarkovModel:
                     x = X[i]
                     y = Y[i]
                     M = len(x)
-        
+
                     num += len([1 for i in range(M - 1) \
                                 if y[i] == curr and y[i + 1] == nxt])
                     den += len([1 for i in range(M - 1) if y[i] == curr])
@@ -284,7 +284,7 @@ class HiddenMarkovModel:
                     x = X[i]
                     y = Y[i]
                     M = len(x)
-        
+
                     num += len([1 for i in range(M) \
                                 if y[i] == curr and x[i] == xt])
                     den += len([1 for i in range(M) if y[i] == curr])
@@ -334,7 +334,7 @@ class HiddenMarkovModel:
                 # The i^th index is P(y^t = i, x).
                 for t in range(1, M + 1):
                     P_curr = [0. for _ in range(self.L)]
-                    
+
                     for curr in range(self.L):
                         P_curr[curr] = alphas[t][curr] * betas[t][curr]
 
@@ -384,7 +384,7 @@ class HiddenMarkovModel:
     def generate_emission(self, M):
         '''
         Generates an emission of length M, assuming that the starting state
-        is chosen uniformly at random. 
+        is chosen uniformly at random.
 
         Arguments:
             M:          Length of the emission to generate.
@@ -486,11 +486,11 @@ def supervised_HMM(X, Y):
 
     Arguments:
         X:          A dataset consisting of input sequences in the form
-                    of lists of variable length, consisting of integers 
+                    of lists of variable length, consisting of integers
                     ranging from 0 to D - 1. In other words, a list of lists.
 
         Y:          A dataset consisting of state sequences in the form
-                    of lists of variable length, consisting of integers 
+                    of lists of variable length, consisting of integers
                     ranging from 0 to L - 1. In other words, a list of lists.
                     Note that the elements in X line up with those in Y.
     '''
@@ -504,7 +504,7 @@ def supervised_HMM(X, Y):
     states = set()
     for y in Y:
         states |= set(y)
-    
+
     # Compute L and D.
     L = len(states)
     D = len(observations)
@@ -516,7 +516,7 @@ def supervised_HMM(X, Y):
         norm = sum(A[i])
         for j in range(len(A[i])):
             A[i][j] /= norm
-    
+
     O = [[random.random() for i in range(D)] for j in range(L)]
 
     for i in range(len(O)):
@@ -540,11 +540,11 @@ def unsupervised_HMM(X, n_states, N_iters):
 
     Arguments:
         X:          A dataset consisting of input sequences in the form
-                    of lists of variable length, consisting of integers 
+                    of lists of variable length, consisting of integers
                     ranging from 0 to D - 1. In other words, a list of lists.
 
         n_states:   Number of hidden states to use in training.
-        
+
         N_iters:    The number of iterations to train on.
     '''
 
@@ -552,7 +552,7 @@ def unsupervised_HMM(X, n_states, N_iters):
     observations = set()
     for x in X:
         observations |= set(x)
-    
+
     # Compute L and D.
     L = n_states
     D = len(observations)
@@ -564,7 +564,7 @@ def unsupervised_HMM(X, n_states, N_iters):
         norm = sum(A[i])
         for j in range(len(A[i])):
             A[i][j] /= norm
-    
+
     # Randomly initialize and normalize matrix O.
     O = [[random.random() for i in range(D)] for j in range(L)]
 

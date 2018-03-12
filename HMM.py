@@ -7,6 +7,8 @@
 ########################################
 
 import random
+from preprocessing import getTrainingDataHMM
+from helperFunctions import getSyllableDict
 
 class HiddenMarkovModel:
     '''
@@ -158,6 +160,10 @@ class HiddenMarkovModel:
                 # the probabilities of all paths from the start state to
                 # the current state.
                 for prev in range(self.L):
+                    #print (x[0])
+                    #print (self.O[curr][x[0]])
+                    #print (self.A_start[curr])
+                    #print (alphas[1][curr])
                     prob += alphas[t][prev] \
                             * self.A[prev][curr] \
                             * self.O[curr][x[t]]
@@ -578,3 +584,7 @@ def unsupervised_HMM(X, n_states, N_iters):
     HMM.unsupervised_learning(X, N_iters)
 
     return HMM
+
+#(X_train, Y_train) = getTrainingDataHMM(5)
+#HMM = unsupervised_HMM(X_train, 3205, 50)
+

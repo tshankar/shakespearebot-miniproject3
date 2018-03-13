@@ -1,19 +1,20 @@
 import numpy as np
+<<<<<<< HEAD
 from helperFunctions import isIntegerString, flattenListString, getSyllableDict, getWordNumDict, nums_to_words
 
 ''' Returns data = [[line1], [line2],...]'''
 def byLine():
     data = []
     stripped_data = []
-    #punctuation = [',', ':', ';', '.', '?', '!', '\'']
+
     punctuation = [',', ':', ';', '.', '?', '!']
     data = np.loadtxt("data/shakespeare.txt", delimiter='\n', dtype='bytes').astype(str)
 
     # Strip all whitespace (including whitespace on last line of poems)
     for i in range(len(data)):
         line = data[i].strip()
-        # for punc in punctuation: # Delete punctuation
-        #     line = line.replace(punc, "")
+        for punc in punctuation: # Delete punctuation
+            line = line.replace(punc, "")
 
         if not isIntegerString(line):
             stripped_data.append(line)
@@ -24,7 +25,6 @@ def byLine():
     If flattened, each poem is [line1line2....]. '''
 def byPoem(flatten=False):
     data = []
-    #punctuation = [',', ':', ';', '.', '?', '!', '\'']
     punctuation = [',', ':', ';', '.', '?', '!']
     with open('data/shakespeare.txt') as f:
         poem = []
@@ -55,8 +55,10 @@ def byStanza():
         stanzaData.append(poem[12:])
     return stanzaData
 
+
 ''' Returns training data for RNN split by sequences of length seqLength'''
-def getTrainingDataRNN(seqLength):
+def getTrainingData(seqLength):
+
     data = byPoem()
     segments = []
     trainingXchars = []
